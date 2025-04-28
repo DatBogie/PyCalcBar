@@ -13,7 +13,7 @@ This app can be used either as a CLI tool or a traditional GUI app.
 > The following commands assume that you're on linux, and that either:
 > <br>a) you're in the same directory as the pycalcbar executable
 > <br>b) the pycalcbar executable's directory has been added to the system PATH
-> <br>If you're on macOS, the executable is located at `pycalcbar.app/Contents/MacOS/pycalcbar` instead of just `pycalcbar`.
+> <br>If you're on macOS, the raw executable (not the `.app`) is located at `pycalcbar`, just like in Linux.
 > <br>If you're on Windows, the executable will be called `pycalcbar.exe`, not just `pycalcbar`.
 
 ## CLI
