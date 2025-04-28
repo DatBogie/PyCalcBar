@@ -31,7 +31,6 @@ class MainWindow(QMainWindow):
         self.setFixedSize(800, 50)
         self.setWindowTitle("PyCalcBar")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
-        self.setGeometry(self.x(),50,self.width(),self.height())
 
         layout = QHBoxLayout()
         
@@ -51,6 +50,8 @@ class MainWindow(QMainWindow):
         central.setLayout(layout)
 
         self.setCentralWidget(central)
+    def setup(self):
+        self.setGeometry(self.x(),50,self.width(),self.height())
     def input_changed(self):
         try:
             result = eval(self.input.text())
@@ -118,4 +119,5 @@ Guide:
     app.setStyleSheet(STYLESHEET)
     window = MainWindow()
     window.show()
+    window.setup()
     sys.exit(app.exec())
