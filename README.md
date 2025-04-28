@@ -11,32 +11,32 @@ If you want to use this outside of Linux for some reason, this section is for yo
 
 > [!Important]
 > This app requires Python to be installed.
-> On Linux, please install either `wl-clipboard` (Wayland) or `xclip` (X11), depending on your compositor.
-> This guide uses `git`. Please install/initialize it if it's not already.
+<br>On Linux, please install either `wl-clipboard` (Wayland) or `xclip` (X11), depending on your compositor.
+> This guide uses `git`. Please install/initialize it if it isn't already.
 
 1. Clone Repo
-Simply run:
+<br>Simply run:
 ```
 git clone https://github.com/DatBogie/PyCalcBar && cd PyCalcBar
 ```
 
-2. Venv
-Simply run:
+<br>2. Venv
+<br>Simply run:
 ```
 python3 -m venv .venv && pip3 install -r requirements.txt
 ```
 
-3. Build
-If on Linux, simply run:
+<bR>3. Build
+<br>If on Linux, simply run:
 ```
 ./build-linux.sh
 ```
-Otherwise:
-	If on macOS, run:
+Otherwise...
+<br>**If on macOS, run:**
 ```
 pyinstaller main.py --onefile --noconsole --argv-emulation
 ```
-	Else, run:
+**If on Windows, run:**
 ```
 pyinstaller main.py --onefile --noconsole --argv-emulation
 ```
