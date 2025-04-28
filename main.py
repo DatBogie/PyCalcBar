@@ -1,7 +1,7 @@
 import sys, os, pyclip
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QLineEdit, QLabel
 from PyQt6.QtCore import Qt
-import math
+import math, random
 
 STYLESHEET = """
 QWidget {
@@ -15,6 +15,10 @@ QLineEdit {
     border-radius: 5px;
 }
 """
+
+VALID_OUTPUT_TYPES = ["int","float","str","list","dict"]
+for i,t in enumerate(VALID_OUTPUT_TYPES):
+    VALID_OUTPUT_TYPES[i] = f"<class '{t}'>"
 
 def invalid():
     print("No matching pattern of options found:" + " ".join(sys.argv[1:]) + "\nUse pycalcbar --help for more information.")
@@ -49,7 +53,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
     def input_changed(self):
         try:
-            self.output.setText(str(eval(self.input.text())))
+            result = eval(self.input.text())
+            if not str(type(result)) in VALID_OUTPUT_TYPES: return
+            self.output.setText(str(result))
         except Exception as e:pass
     def keyPressEvent(self, a0):
         if a0.key() == Qt.Key.Key_Escape:
