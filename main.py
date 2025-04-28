@@ -1,6 +1,7 @@
 import sys, os, pyclip
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QLineEdit, QLabel
 from PyQt6.QtCore import Qt
+import math
 
 STYLESHEET = """
 QWidget {
