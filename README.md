@@ -71,9 +71,9 @@ python3 -m venv .venv && pip3 install -r requirements.txt
 <br>Otherwise...
 <br>**If on macOS, run:**
 ```
-pyinstaller main.py -n pycalbar --onefile --noconsole --argv-emulation
+pyinstaller main.py -n pycalcbar --onefile --noconsole --argv-emulation
 ```
 **If on Windows, run:**
 ```
-pyinstaller main.py -n pycalbar --onefile --noconsole
+pyinstaller main.py -n pycalcbar --onefile --noconsole
 ```
