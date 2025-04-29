@@ -3,7 +3,8 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QLi
 from PyQt6.QtCore import Qt
 import math, random
 
-STYLESHEET = """
+WSTYLE = "Fusion"
+STYLESHEET = """WIDGETS=Fusion
 QWidget {
     background: transparent;
     border: none;
@@ -21,8 +22,8 @@ for i,t in enumerate(VALID_OUTPUT_TYPES):
     VALID_OUTPUT_TYPES[i] = f"<class '{t}'>"
 
 def invalid():
-    print("No matching pattern of options found:" + " ".join(sys.argv[1:]) + "\nUse pycalcbar --help for more information.")
-    sys.exit(0)
+    print("No matching pattern of options found: " + " ".join(sys.argv[1:]) + "\nUse pycalcbar --help for more information.")
+    sys.exit(-1)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -68,7 +69,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         _1 = sys.argv[1]
-        if _1 == "--help":
+        if _1 == "--help" or _1 == "-h":
             print("""
 PyCalcBar - A simple popup calculator bar written in Python.
 Usage:
@@ -85,11 +86,11 @@ Guide:
     Press Escape to close.
 
 """)
-            sys.exit(-1)
+            sys.exit(0)
         elif _1 == "--defstyle" or _1 == "-d":
             print(STYLESHEET)
-            sys.exit(-1)
-        if len(sys.argv) < 2:
+            sys.exit(0)
+        if len(sys.argv) < 3:
             invalid()
         _2 = sys.argv[2]
         if _1.startswith("--style") or _1.startswith("-s"):
@@ -115,6 +116,9 @@ Guide:
                 
     
     app = QApplication(sys.argv)
+    if STYLESHEET.startswith("WIDGETS="):
+        WSTYLE = STYLESHEET[STYLESHEET.find("=")+1:STYLESHEET.find("\n")]
+        STYLESHEET = STYLESHEET[STYLESHEET.find("\n")+1:]
     app.setStyle("Fusion")
     app.setStyleSheet(STYLESHEET)
     window = MainWindow()
