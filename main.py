@@ -1,6 +1,9 @@
 import sys, os, pyclip
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QLineEdit, QLabel
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QLineEdit, QLabel, QMenu, QMenuBar
+from PyQt6.QtCore import Qt, pyqtSignal, QObject
+from PyQt6.QtGui import QAction, QKeySequence
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 import math, random
 
 WSTYLE = "Fusion"
@@ -17,6 +20,11 @@ QLineEdit {
 }
 """
 
+CDIR = os.path.abspath("./") if not hasattr(sys,"_MEIPASS") else sys._MEIPASS
+
+if os.path.exists(os.path.join(CDIR,"__SHOW__")):
+    os.remove(os.path.join(CDIR,"__SHOW__"))
+
 VALID_OUTPUT_TYPES = ["int","float","str","list","dict"]
 for i,t in enumerate(VALID_OUTPUT_TYPES):
     VALID_OUTPUT_TYPES[i] = f"<class '{t}'>"
@@ -25,6 +33,29 @@ def invalid():
     print("No matching pattern of options found: " + " ".join(sys.argv[1:]) + "\nUse pycalcbar --help for more information.")
     sys.exit(-1)
 
+window = None
+
+class ShowSignal(QObject):
+    signal = pyqtSignal()
+
+SHOW_SIGNAL = ShowSignal()
+
+def show_window():
+    if window != None:
+        window.show()
+
+SHOW_SIGNAL.signal.connect(show_window)
+
+class FileCreatedHandler(FileSystemEventHandler):
+    def __init__(self,path):
+        super().__init__()
+        self.path = path
+    def on_created(self, event):
+        if event.src_path.endswith(self.path):
+            if window and __name__ == "__main__":
+                SHOW_SIGNAL.signal.emit()
+                os.remove(event.src_path)
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -32,6 +63,15 @@ class MainWindow(QMainWindow):
         self.setFixedSize(800, 50)
         self.setWindowTitle("PyCalcBar")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
+        
+        bar = QMenuBar(self)
+        file_menu = QMenu("File", self)
+        exit_act = QAction("Exit", self)
+        exit_act.setShortcut(QKeySequence(QKeySequence.StandardKey.Quit))
+        exit_act.triggered.connect(self.close)
+        file_menu.addAction(exit_act)
+        bar.addMenu(file_menu)
+        self.setMenuBar(bar)
 
         layout = QHBoxLayout()
         
@@ -61,11 +101,21 @@ class MainWindow(QMainWindow):
         except Exception as e:pass
     def keyPressEvent(self, a0):
         if a0.key() == Qt.Key.Key_Escape:
-            self.close()
+            self.hide()
         elif a0.key() == Qt.Key.Key_Return or a0.key() == Qt.Key.Key_Enter:
             pyclip.copy(self.output.text())
         super().keyPressEvent(a0)
+    
+    def closeEvent(self, a0):
+        if os.path.exists(os.path.join(CDIR,"__LOCK__")):
+            os.remove(os.path.join(CDIR,"__LOCK__"))
+        return super().closeEvent(a0)
 
+if os.path.exists(os.path.join(CDIR,"__LOCK__")):
+    with open(os.path.join(CDIR,"__SHOW__"),"w") as f:
+        f.write("")
+    print("Sent __SHOW__ signal...")
+    sys.exit(0)
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         _1 = sys.argv[1]
@@ -83,7 +133,8 @@ Guide:
     Type a math expression into the input (left) box.
     As you type, the last valid result will be displayed in the output (right) box.
     Press Return/Enter to copy the result (Linux : requires wl-clipboard/xclip).
-    Press Escape to close.
+    Press Escape to hide.
+    Press CTRL+Q/CMD+Q to close.
 
 """)
             sys.exit(0)
@@ -113,8 +164,16 @@ Guide:
             sys.exit(-1)
         else:
             invalid()
-                
     
+    def show_win():
+        window.show()
+    
+    observer = Observer()
+    observer.schedule(FileCreatedHandler("__SHOW__"),CDIR,recursive=False)
+    observer.start()
+
+    with open(os.path.join(CDIR,"__LOCK__"),"w") as f:
+        f.write("")
     app = QApplication(sys.argv)
     if STYLESHEET.startswith("WIDGETS="):
         WSTYLE = STYLESHEET[STYLESHEET.find("=")+1:STYLESHEET.find("\n")]
@@ -124,4 +183,8 @@ Guide:
     window = MainWindow()
     window.show()
     window.setup()
-    sys.exit(app.exec())
+    __code = app.exec()
+    observer.stop()
+    sys.exit(__code)
+    if os.path.exists(os.path.join(CDIR,"__LOCK__")):
+        os.remove(os.path.join(CDIR,"__LOCK__"))
