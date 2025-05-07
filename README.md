@@ -2,10 +2,6 @@
 Simple Qt bar that shows the result of Python math expressions, written in Python.
 <br>Yes, I know `eval()` is bad or whatever. Fight me. (Actually please don't―you'd probably win.)
 
-> [!Note]
-> This app is intended for use in tiling WMs à la hyprland or i3wm.
-> Therefore, binaries are only provided for Linux.
-
 # Usage
 This app can be used either as a CLI tool or a traditional GUI app.
 
